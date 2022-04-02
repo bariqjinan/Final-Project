@@ -33,3 +33,23 @@ Route.group(() => {
   );
   Route.post("/login", "AuthController.login").as("user.login");
 }).prefix("/api/v1");
+
+// Venue
+
+Route.group(() => {
+  Route.resource("venues", "VenuesController").apiOnly();
+})
+  .prefix("/api/v1")
+  .middleware(["auth", "verify", "owner"]);
+
+// Field
+Route.group(() => {
+  Route.resource("venues.fields", "FieldsController").apiOnly();
+})
+  .prefix("/api/v1")
+  .middleware(["auth", "verify", "owner"]);
+
+// Booking
+Route.group(() => {
+  Route.post("/venues/:id/bookings", "Booki");
+});
