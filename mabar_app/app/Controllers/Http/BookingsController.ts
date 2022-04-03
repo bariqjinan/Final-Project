@@ -108,4 +108,55 @@ export default class BookingsController {
 
     return response.ok({ message: "succes get schedules", data });
   }
+
+  public async update({
+    request,
+    response,
+    auth,
+    params,
+  }: HttpContextContract) {
+    const user = auth.user!;
+    const booking = await Booking.findByOrFail("id", params.id);
+
+    if (user.id == booking.userId) {
+      await request.validate(BookingValidator);
+
+      await booking
+        .merge({
+          playDateStart: request.input("play_date_start"),
+          playDateEnd: request.input("play_date_end"),
+          totalPlayers: request.input("total_players"),
+          fieldId: request.input("field_id"),
+        })
+        .save();
+
+      // booking.playDateStart = payload.play_date_start;
+      // booking.playDateEnd = payload.play_date_end;
+      // booking.totalPlayers = payload.total_players;
+      // booking.fieldId = payload.field_id;
+
+      // await booking.save();
+      return response.ok({
+        message: "Booking has been updated",
+      });
+    } else {
+      return response.unauthorized({
+        message: "you dont have permission to access this",
+      });
+    }
+  }
+
+  public async delete({ params, response, auth }: HttpContextContract) {
+    const user = auth.user!;
+    const booking = await Booking.findOrFail(params.id);
+
+    if (booking.userId == user.id) {
+      await booking.delete();
+      return response.ok({ message: "booking has been deleted" });
+    } else {
+      return response.unauthorized({
+        message: "you dont have permission to acces this",
+      });
+    }
+  }
 }

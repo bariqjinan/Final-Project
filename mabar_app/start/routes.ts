@@ -37,17 +37,21 @@ Route.group(() => {
 // Venue
 
 Route.group(() => {
-  Route.resource("venues", "VenuesController").apiOnly();
+  Route.resource("venues", "VenuesController")
+    .middleware({ store: ["owner"], update: ["owner"], destroy: ["owner"] })
+    .apiOnly();
 })
   .prefix("/api/v1")
-  .middleware(["auth", "verify", "owner"]);
+  .middleware(["auth", "verify"]);
 
 // Field
 Route.group(() => {
-  Route.resource("venues.fields", "FieldsController").apiOnly();
+  Route.resource("venues.fields", "FieldsController")
+    .middleware({ store: ["owner"], update: ["owner"], destroy: ["owner"] })
+    .apiOnly();
 })
   .prefix("/api/v1")
-  .middleware(["auth", "verify", "owner"]);
+  .middleware(["auth", "verify"]);
 
 // Booking
 Route.group(() => {
@@ -61,6 +65,10 @@ Route.group(() => {
     "unjoin.booking"
   );
   Route.get("/schedules", "BookingsController.schedules").as("schedules");
+  Route.put("/bookings/:id", "BookingsController.update").as("update.booking");
+  Route.delete("/bookings/:id", "BookingsController.delete").as(
+    "delete.booking"
+  );
 })
   .prefix("/api/v1")
   .middleware(["auth", "verify", "user"]);

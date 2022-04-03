@@ -3,9 +3,8 @@ import Venue from "App/Models/Venue";
 import VenueValidator from "App/Validators/VenueValidator";
 
 export default class VenuesController {
-  public async index({ response, auth }: HttpContextContract) {
-    let user = auth.user!;
-    const venue = await Venue.findBy("userId", user.id);
+  public async index({ response }: HttpContextContract) {
+    const venue = await Venue.query().preload("fields");
 
     return response.ok({ message: "succes get data", data: venue });
   }

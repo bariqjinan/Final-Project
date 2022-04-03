@@ -11,7 +11,11 @@ import Field from "./Field";
 import User from "./User";
 
 export default class Booking extends BaseModel {
-  public serializeExtras = true;
+  public serializeExtras() {
+    return {
+      players_count: this.$extras.players_count,
+    };
+  }
 
   @column({ isPrimary: true })
   public id: number;
