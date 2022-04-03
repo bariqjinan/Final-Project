@@ -10,6 +10,29 @@ import {
 import Venue from "./Venue";
 import Booking from "./Booking";
 
+/**
+ * @swagger
+ *  definitions:
+ *    Field:
+ *      type: object
+ *      properties:
+ *        name:
+ *          type: string
+ *          example: Lapangan Basket A
+ *        type:
+ *          type: string
+ *          enum:
+ *            - soccer
+ *            - minisoccer
+ *            - futsal
+ *            - basketball
+ *            - volleyball
+ *          example: basketball
+ *      required:
+ *        - name
+ *        - type
+ */
+
 export default class Field extends BaseModel {
   @column({ isPrimary: true })
   public id: number;

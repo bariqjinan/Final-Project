@@ -4,8 +4,26 @@ import Field from "App/Models/Field";
 import User from "App/Models/User";
 import Venue from "App/Models/Venue";
 import BookingValidator from "App/Validators/BookingValidator";
+import { schema, rules } from "@ioc:Adonis/Core/Validator";
 
 export default class BookingsController {
+  /**
+   *
+   * @swagger
+   * /api/v1/bookings:
+   *  get:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Booking
+   *    description: Endpoint for get all bookings
+   *    responses:
+   *      200:
+   *        description: success get all data bookings
+   *      401:
+   *        description: You dont have permission to access this
+   *
+   */
   public async index({ response }: HttpContextContract) {
     const booking = await Booking.query()
       .preload("field", (query) => {
@@ -15,6 +33,44 @@ export default class BookingsController {
 
     return response.ok({ message: "success get data booking", data: booking });
   }
+
+  /**
+   *
+   * @swagger
+   * /api/v1/venues/{id}/bookings:
+   *  post:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Venue
+   *    description: Endpoint for booking field
+   *    parameters:
+   *      -
+   *       in: 'path'
+   *       name: 'id'
+   *       required: true
+   *       schema :
+   *        type: integer
+   *        minimum: 1
+   *        example: 1
+   *       description: The Venue ID
+   *    requestBody:
+   *      content:
+   *        application/x-www-form-urlencoded:
+   *          schema:
+   *            $ref: '#definitions/Booking'
+   *        application/json:
+   *          schema:
+   *            $ref: '#definitions/Booking'
+   *    responses:
+   *      201:
+   *        description: success booking
+   *      401:
+   *        description: you dont have permission to access this
+   *      400:
+   *        description: you cant book this field
+   *
+   */
 
   public async store({ request, response, params, auth }: HttpContextContract) {
     let payload = await request.validate(BookingValidator);
@@ -37,6 +93,107 @@ export default class BookingsController {
     }
   }
 
+  /**
+   *
+   * @swagger
+   * /api/v1/bookings/{id}:
+   *  get:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Booking
+   *    description: Endpoint for get detail booking
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Booking ID
+   *    responses:
+   *      200:
+   *        description: success get detail booking
+   *      401:
+   *        description: only user can access this route
+   *
+   *  put:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Booking
+   *    description: Endpoint for update booking
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Booking ID
+   *    requestBody:
+   *      content:
+   *        application/x-www-form-urlencoded:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              play_date_start:
+   *                type: string
+   *                format: date
+   *                example: 2022-10-30 15:00:00
+   *              play_date_end:
+   *                type: string
+   *                format: date
+   *                example: 2022-10-30 17:00:00
+   *              total_players:
+   *                type: integer
+   *                example: 18
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              play_date_start:
+   *                type: string
+   *                format: date
+   *                example: 2022-10-30 15:00:00
+   *              play_date_end:
+   *                type: string
+   *                format: date
+   *                example: 2022-10-30 17:00:00
+   *              total_players:
+   *                type: integer
+   *                example: 18
+   *    responses:
+   *      200:
+   *        description: success get detail booking
+   *      401:
+   *        description: only user can access this route
+   *
+   *  delete:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Booking
+   *    description: Endpoint for delete booking
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Booking ID
+   *    responses:
+   *      200:
+   *        description: success get detail booking
+   *      401:
+   *        description: only user can access this route
+   
+   */
+
   public async show({ params, response }: HttpContextContract) {
     const booking = await Booking.query()
       .where("id", params.id)
@@ -54,6 +211,36 @@ export default class BookingsController {
       data: booking,
     });
   }
+
+  /**
+   *
+   * @swagger
+   * /api/v1/bookings/{id}/join:
+   *  put:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Booking
+   *    description: Endpoint for join booking
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Booking ID
+   *    responses:
+   *      200:
+   *        description: success join booking
+   *      401:
+   *        description: only user can access this route
+   *      400:
+   *        description: you cant join on this field
+   *
+   *
+   */
 
   public async join({ auth, response, params }: HttpContextContract) {
     const data = await Booking.query()
@@ -75,6 +262,33 @@ export default class BookingsController {
     }
   }
 
+  /**
+   *
+   * @swagger
+   * /api/v1/bookings/{id}/unjoin:
+   *  put:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Booking
+   *    description: Endpoint for unjoin booking
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Booking ID
+   *    responses:
+   *      200:
+   *        description: success unjoin booking
+   *      401:
+   *        description: only user can access this route
+   *
+   */
+
   public async unjoin({ response, auth, params }: HttpContextContract) {
     const user = auth.user!;
 
@@ -84,6 +298,24 @@ export default class BookingsController {
 
     return response.ok({ message: "success unjoin" });
   }
+
+  /**
+   * @swagger
+   * /api/v1/schedules:
+   *   get:
+   *    security:
+   *      - bearerAuth: []
+   *    tags :
+   *      - Booking
+   *    description: Endpoint for get schedules from login user
+   *    responses:
+   *      200:
+   *        description: Success get schedules
+   *      400:
+   *        description: Invalid request
+   *      401:
+   *        description: Only user can access this route
+   */
 
   public async schedules({ response, auth }: HttpContextContract) {
     const user = auth.user!;
@@ -115,18 +347,28 @@ export default class BookingsController {
     auth,
     params,
   }: HttpContextContract) {
+    const bookSchema = schema.create({
+      play_date_start: schema.date({ format: "yyyy-MM-dd HH:mm:ss" }, [
+        rules.unique({ table: "bookings", column: "play_date_start" }),
+        rules.after("today"),
+      ]),
+      play_date_end: schema.date({ format: "yyyy-MM-dd HH:mm:ss" }, [
+        rules.afterField("play_date_start"),
+      ]),
+      total_players: schema.number([rules.range(2, 20)]),
+    });
+
     const user = auth.user!;
     const booking = await Booking.findByOrFail("id", params.id);
 
     if (user.id == booking.userId) {
-      await request.validate(BookingValidator);
+      await request.validate({ schema: bookSchema });
 
       await booking
         .merge({
           playDateStart: request.input("play_date_start"),
           playDateEnd: request.input("play_date_end"),
           totalPlayers: request.input("total_players"),
-          fieldId: request.input("field_id"),
         })
         .save();
 

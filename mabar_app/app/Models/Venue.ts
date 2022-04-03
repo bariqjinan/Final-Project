@@ -10,6 +10,28 @@ import {
 import User from "./User";
 import Field from "./Field";
 
+/**
+ * @swagger
+ * definitions:
+ *  Venue:
+ *    type: object
+ *    properties:
+ *      name:
+ *        type: string
+ *        example: SARAGA ITB
+ *      address:
+ *        type: string
+ *        example: Jl. Siliwangi Dalam 3, Lb. Siliwangi, Kecamatan Coblong, Kota Bandung, Jawa Barat
+ *      phone:
+ *        type: string
+ *        example: '+6281382774295'
+ *    required:
+ *      - name
+ *      - address
+ *      - phone
+ *
+ */
+
 export default class Venue extends BaseModel {
   @column({ isPrimary: true })
   public id: number;

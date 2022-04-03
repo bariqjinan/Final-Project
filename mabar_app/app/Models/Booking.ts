@@ -10,6 +10,34 @@ import {
 import Field from "./Field";
 import User from "./User";
 
+/**
+ * @swagger
+ * definitions:
+ *  Booking:
+ *    type: object
+ *    properties:
+ *      field_id:
+ *        type: integer
+ *        example: 1
+ *      play_date_start:
+ *        type: string
+ *        format: date
+ *        example: 2022-10-30 15:00:00
+ *      play_date_end:
+ *        type: string
+ *        format: date
+ *        example: 2022-10-30 16:00:00
+ *      total_players:
+ *        type: integer
+ *        example: 20
+ *    required:
+ *      - field_id
+ *      - play_date_start
+ *      - play_date_end
+ *      - total_players
+ *
+ */
+
 export default class Booking extends BaseModel {
   public serializeExtras() {
     return {

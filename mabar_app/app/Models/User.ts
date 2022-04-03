@@ -12,6 +12,40 @@ import {
 import Venue from "./Venue";
 import Booking from "./Booking";
 
+/**
+ * @swagger
+ * definitions:
+ *  User:
+ *    type: object
+ *    properties:
+ *      id:
+ *        type: integer
+ *      name:
+ *        type: string
+ *        minLength: 5
+ *        example: bariq
+ *      email:
+ *        type: string
+ *        format: email
+ *        example: bariq@gmail.com
+ *      password:
+ *        type: string
+ *        minLength: 5
+ *        example: bariq123
+ *      role:
+ *        type: string
+ *        enum:
+ *          - user
+ *          - owner
+ *
+ *    required:
+ *      - name
+ *      - email
+ *      - password
+ *      - role
+ *
+ */
+
 export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number;

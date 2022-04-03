@@ -4,6 +4,62 @@ import Venue from "App/Models/Venue";
 import FieldValidator from "App/Validators/FieldValidator";
 
 export default class FieldsController {
+  /**
+   * @swagger
+   * /api/v1/venues/{venue_id}/fields:
+   *   post:
+   *    security:
+   *      - bearerAuth: []
+   *    tags :
+   *      - Field
+   *    description: Endpoint for store field
+   *    parameters:
+   *      - name: venue_id
+   *        description: Venue ID
+   *        in: path
+   *        required: true
+   *        schema:
+   *            type: integer
+   *            minimum: 1
+   *            example: 1
+   *    requestBody:
+   *      content:
+   *        application/x-www-form-urlencoded:
+   *          schema:
+   *            $ref: '#definitions/Field'
+   *        application/json:
+   *          schema:
+   *            $ref: '#definitions/Field'
+   *    responses:
+   *      201:
+   *        description: Success store data field
+   *      400:
+   *        description: Invalid request
+   *      401:
+   *        description: Only owner can access this route
+   *   get:
+   *      security:
+   *      - bearerAuth: []
+   *      tags:
+   *        - Field
+   *      description: Endpoint to get all field data by venue_id
+   *      parameters:
+   *        - in: path
+   *          name: venue_id
+   *          required: true
+   *          schema:
+   *            type: integer
+   *            minimun: 1
+   *            example: 1
+   *          description: The venue ID
+   *      responses:
+   *        200:
+   *          description: Success get all data fields by venue_id
+   *        400:
+   *          description: Bad request
+   *
+   */
+
   public async index({ response, params }: HttpContextContract) {
     const venue_id = params.venue_id;
 
@@ -40,6 +96,110 @@ export default class FieldsController {
     }
   }
 
+  /**
+   *
+   * @swagger
+   * /api/v1/venues/{venue_id}/fields/{id}:
+   *  get:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Field
+   *    description: Get detail data field by venue id and field id
+   *    parameters:
+   *      - in: path
+   *        name: venue_id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Venue ID
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The field ID
+   *    responses:
+   *      200:
+   *        description: success get detail data field
+   *      400:
+   *        description: Bad Request
+   *      404 :
+   *        description: Row not found
+   *
+   *  put:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Field
+   *    description: Endpoint for update data field
+   *    parameters:
+   *      - in: path
+   *        name: venue_id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Venue ID
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The field ID
+   *    requestBody:
+   *      content:
+   *        application/x-www-form-urlencoded:
+   *          schema:
+   *            $ref: '#definitions/Field'
+   *        application/json:
+   *          schema:
+   *            $ref: '#definitions/Field'
+   *    responses:
+   *      200:
+   *        description: success updated data field
+   *      401:
+   *        description: you cant access this
+   *
+   *  delete:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Field
+   *    description: Endpoint to delete data field
+   *    parameters:
+   *      - in: path
+   *        name: venue_id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The Venue ID
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          minimum: 1
+   *          example: 1
+   *        description: The field ID
+   *    responses:
+   *      200:
+   *        description: success delete data field
+   *      401:
+   *        description: you cant access this
+   
+   *
+   */
+
   public async show({ response, params }: HttpContextContract) {
     let data = await Field.query()
       .where("id", params.id)
@@ -58,7 +218,7 @@ export default class FieldsController {
     auth,
   }: HttpContextContract) {
     let user = auth.user!;
-    let venue = await Venue.findByOrFail("user_id", user.id);
+    let venue = await Venue.findByOrFail("id", params.venue_id);
 
     if (venue.userId == user.id) {
       let payload = await request.validate(FieldValidator);

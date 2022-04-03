@@ -31,7 +31,9 @@ Route.group(() => {
   Route.post("/otp-confirmation", "AuthController.otp_verification").as(
     "otpVerification"
   );
-  Route.post("/login", "AuthController.login").as("user.login");
+  Route.post("/login", "AuthController.login")
+    .middleware("verify")
+    .as("user.login");
 }).prefix("/api/v1");
 
 // Venue
@@ -42,7 +44,7 @@ Route.group(() => {
     .apiOnly();
 })
   .prefix("/api/v1")
-  .middleware(["auth", "verify"]);
+  .middleware(["auth"]);
 
 // Field
 Route.group(() => {
@@ -51,7 +53,7 @@ Route.group(() => {
     .apiOnly();
 })
   .prefix("/api/v1")
-  .middleware(["auth", "verify"]);
+  .middleware(["auth"]);
 
 // Booking
 Route.group(() => {
@@ -71,4 +73,4 @@ Route.group(() => {
   );
 })
   .prefix("/api/v1")
-  .middleware(["auth", "verify", "user"]);
+  .middleware(["auth", "user"]);
