@@ -51,5 +51,16 @@ Route.group(() => {
 
 // Booking
 Route.group(() => {
-  Route.post("/venues/:id/bookings", "Booki");
-});
+  Route.post("/venues/:id/bookings", "BookingsController.store").as(
+    "create.booking"
+  );
+  Route.get("/bookings", "BookingsController.index").as("get.all.booking");
+  Route.get("/bookings/:id", "BookingsController.show").as("get.booking.id");
+  Route.put("/bookings/:id/join", "BookingsController.join").as("join.booking");
+  Route.put("/bookings/:id/unjoin", "BookingsController.unjoin").as(
+    "unjoin.booking"
+  );
+  Route.get("/schedules", "BookingsController.schedules").as("schedules");
+})
+  .prefix("/api/v1")
+  .middleware(["auth", "verify", "user"]);

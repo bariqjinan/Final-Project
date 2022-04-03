@@ -1,13 +1,50 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { DateTime } from "luxon";
+import {
+  BaseModel,
+  BelongsTo,
+  belongsTo,
+  column,
+  ManyToMany,
+  manyToMany,
+} from "@ioc:Adonis/Lucid/Orm";
+import Field from "./Field";
+import User from "./User";
 
 export default class Booking extends BaseModel {
+  public serializeExtras = true;
+
   @column({ isPrimary: true })
-  public id: number
+  public id: number;
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  @column()
+  public fieldId: number;
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  @column()
+  public playDateStart: DateTime;
+
+  @column()
+  public playDateEnd: DateTime;
+
+  @column()
+  public totalPlayers: number;
+
+  @column()
+  public userId: number;
+
+  @column.dateTime({ autoCreate: true, serializeAs: null })
+  public createdAt: DateTime;
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
+  public updatedAt: DateTime;
+
+  @belongsTo(() => Field)
+  public field: BelongsTo<typeof Field>;
+
+  @belongsTo(() => User)
+  public bookingUser: BelongsTo<typeof User>;
+
+  @manyToMany(() => User, {
+    pivotTable: "booking_users",
+  })
+  public players: ManyToMany<typeof User>;
 }

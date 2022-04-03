@@ -6,8 +6,11 @@ import {
   BaseModel,
   hasMany,
   HasMany,
+  manyToMany,
+  ManyToMany,
 } from "@ioc:Adonis/Lucid/Orm";
 import Venue from "./Venue";
+import Booking from "./Booking";
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -22,19 +25,19 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public password: string;
 
-  @column()
+  @column({ serializeAs: null })
   public role: string;
 
-  @column()
+  @column({ serializeAs: null })
   public isVerified: boolean;
 
-  @column()
+  @column({ serializeAs: null })
   public rememberMeToken?: string;
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ autoCreate: true, serializeAs: null })
   public createdAt: DateTime;
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   public updatedAt: DateTime;
 
   @beforeSave()
@@ -46,4 +49,12 @@ export default class User extends BaseModel {
 
   @hasMany(() => Venue)
   public venues: HasMany<typeof Venue>;
+
+  @hasMany(() => Booking)
+  public bookings: HasMany<typeof Booking>;
+
+  @manyToMany(() => Booking, {
+    pivotTable: "booking_users",
+  })
+  public booking: ManyToMany<typeof Booking>;
 }

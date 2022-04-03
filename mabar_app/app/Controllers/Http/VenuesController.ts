@@ -28,8 +28,12 @@ export default class VenuesController {
 
   public async show({ response, params }: HttpContextContract) {
     let venue = await Venue.query()
-      .select("id", "name", "adrress", "phone", "user_id")
-      .preload("fields")
+      .select("id", "name", "address", "phone", "user_id")
+      .preload("fields", (bookQuery) => {
+        bookQuery.preload("bookings", (playersQuery) => {
+          playersQuery.preload("players");
+        });
+      })
       .where("id", params.id)
       .firstOrFail();
     response.ok({ message: "get data by id success!!", data: venue });
@@ -62,17 +66,28 @@ export default class VenuesController {
       return response.ok({
         message: `the venue with id ${venue.id} has been updated!!`,
       });
+    } else {
+      return response.unauthorized({
+        message: "you dont have permission to access this",
+      });
     }
   }
 
   public async destroy({ response, auth, params }: HttpContextContract) {
     const user = auth.user!;
+    let venue = await Venue.findByOrFail("id", params.id);
 
-    await Venue.query()
-      .where("user_id", user.id)
-      .andWhere("id", params.id)
-      .delete()
-      .firstOrFail();
-    return response.ok({ message: "deleted!!" });
+    if (venue.userId == user.id) {
+      await Venue.query()
+        .where("user_id", user.id)
+        .andWhere("id", params.id)
+        .delete()
+        .firstOrFail();
+      return response.ok({ message: "deleted!!" });
+    } else {
+      return response.unauthorized({
+        message: "you dont have permission to access this",
+      });
+    }
   }
 }
